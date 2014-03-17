@@ -1,0 +1,7 @@
+graph G {
+      Amberly -- Tindal
+      Amberly -- Curtin
+      Tindal -- Curtin
+      Pearce -- Learmonth
+      Learmonth -- Tindal
+}
