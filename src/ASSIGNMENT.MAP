@@ -7,20 +7,20 @@ host Pearce {
 }
 
 host Learmonth {
-     x=60, y=155
+     south of Pearce
      ostype = "linux"
      link to Tindal
 }
 
 host Amberly {
-     x=320, y=155
+     south east east of Pearce
      ostype = "linux"
      link to Tindal
      link to Curtin
 }
 
 host Tindal {
-     x=180, y=195
+     south south east of Pearce
      ostype = "sun"
      link to Learmonth
      link to Amberly
@@ -28,7 +28,7 @@ host Tindal {
 }
 
 host Curtin {
-     x=255, y=295
+     south south south of Pearce
      ostype = "linux"
      link to Tindal
      link to Amberly
