@@ -32,7 +32,12 @@ struct PACKET {
  * routed through the network.
  */
 void application_down_to_network(CnetAddr destination_address,
-                                 CnetAddr source_address,
                                  struct MESSAGE *message, int length);
+
+/*
+ * Take the packet from the datalink layer, either it's for us, or we
+ * forward it onto the next node.
+ */
+void datalink_up_to_network(struct PACKET *in_packet);
 
 #endif

@@ -21,4 +21,10 @@ struct MESSAGE {
   char data[MAX_MESSAGE_SIZE];
 };
 
+// Declarations
+void network_up_to_application(struct MESSAGE *in_message, int length);
+
+// Actual message.
+extern struct MESSAGE *last_message;
+
 #endif

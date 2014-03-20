@@ -41,11 +41,18 @@ static EVENT_HANDLER(application_ready) {
                               (char *) last_message,
                               &last_length));
 
+  // Set the length of the message.
+  last_message->length = last_length;
+
   // Disable application message generation (TODO: Why?)
   CNET_disable_application(ALLNODES);
 
   /* Call the network layer. */
-  application_down_to_network(&destination_address,
-                              nodeinfo.address,
+  application_down_to_network(destination_address,
                               last_message, last_length);
+}
+
+void network_up_to_application(struct MESSAGE *in_message, int length) {
+  printf("Application received message.\n");
+  CHECK(CNET_write_application((char *)in_message, &length));
 }

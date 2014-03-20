@@ -22,36 +22,35 @@ static void transmit_frame(struct MESSAGE *message,
                            int seqno);
 
 // Local node variables
-static struct MESSAGE *last_message;
-static size_t last_length = 0;
 static CnetTimerID last_timer = NULLTIMER;
 
 static int ack_expected = 0;
 static int next_frame_to_send = 0;
 static int frame_expected = 0;
 
-static EVENT_HANDLER(physical_ready) {
-  struct FRAME in_frame;
-  size_t frame_length;
-  int link;
+/*
+ * Takes the raw physical frame, and start processing it.
+ */
+void up_to_datalink_from_physical(int in_link,
+                                  struct FRAME *in_frame,
+                                  int frame_length) {
 
-  frame_length = sizeof(struct FRAME);
-  CHECK(CNET_read_physical(&link, (char *)&in_frame, &frame_length));
+  int in_checksum = in_frame->checksum;
 
-  int checksum = in_frame.checksum;
-  in_frame.checksum = 0;
+  // Checksum was calculated with the checksum field of 0.
+  in_frame->checksum = 0;
 
   // Check if the packet is corrupted.
   if (CNET_ccitt((unsigned char *)&in_frame,
-                 (int) frame_length) == checksum) {
+                 (int) frame_length) == in_checksum) {
 
     // Process depending on the frame type.
-    switch (in_frame.type) {
+    switch (in_frame->type) {
       case DL_ACK:
-        process_ack(in_frame, last_timer);
+        process_ack(*in_frame, last_timer);
         break;
       case DL_DATA:
-        process_data(in_frame);
+        process_data(*in_frame);
         break;
       default:
         printf("Error: Unexpected frame type.\n");
@@ -74,7 +73,7 @@ static void process_data(struct FRAME in_frame) {
   if (in_frame.sequence == frame_expected) {
     printf("Up to application.\n");
     int frame_length = in_frame.length;
-    CHECK(CNET_write_application((char *) &in_frame.message, &frame_length));
+    CHECK(CNET_write_application((char *) &in_frame.packet, &frame_length));
     frame_expected = 1 - frame_expected;
   } else {
     printf("Ignored\n");
