@@ -22,9 +22,10 @@ struct MESSAGE {
 };
 
 // Declarations
-void network_up_to_application(struct MESSAGE *in_message, int length);
+EVENT_HANDLER(application_ready);
+void network_up_to_application(struct MESSAGE *in_message, size_t length);
 
-// Actual message.
-extern struct MESSAGE *last_message;
+// The most recently sent message.
+static struct MESSAGE *last_message;
 
 #endif

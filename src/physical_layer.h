@@ -13,4 +13,9 @@
 #ifndef PHYSICAL_LAYER_H_
 #define PHYSICAL_LAYER_H_
 
+#include <cnet.h>
+
+// Forward declarations
+EVENT_HANDLER(physical_ready);
+
 #endif

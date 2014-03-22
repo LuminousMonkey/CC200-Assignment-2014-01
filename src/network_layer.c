@@ -42,6 +42,6 @@ void datalink_up_to_network(struct PACKET *in_packet) {
   // Otherwise find out which link to push it off to and send it.
 
   if (1 == 1) {
-    network_up_to_application(in_packet->message, in_packet->length);
+    network_up_to_application(&in_packet->message, in_packet->length);
   }
 }

@@ -20,10 +20,7 @@
 /* Node variables */
 
 // The length of the most recently send message.
-static int last_length = 0;
-
-// The most recently sent message.
-static struct MESSAGE *last_message;
+static size_t last_length = 0;
 
 /*
  * Application Ready
@@ -31,7 +28,7 @@ static struct MESSAGE *last_message;
  * This is called when the application is ready to send some data to a
  * node. The address will be any node except for the current one.
  */
-static EVENT_HANDLER(application_ready) {
+EVENT_HANDLER(application_ready) {
   CnetAddr destination_address;
 
   last_length = sizeof(struct MESSAGE);
@@ -41,9 +38,6 @@ static EVENT_HANDLER(application_ready) {
                               (char *) last_message,
                               &last_length));
 
-  // Set the length of the message.
-  last_message->length = last_length;
-
   // Disable application message generation (TODO: Why?)
   CNET_disable_application(ALLNODES);
 
@@ -52,7 +46,7 @@ static EVENT_HANDLER(application_ready) {
                               last_message, last_length);
 }
 
-void network_up_to_application(struct MESSAGE *in_message, int length) {
+void network_up_to_application(struct MESSAGE *in_message, size_t length) {
   printf("Application received message.\n");
   CHECK(CNET_write_application((char *)in_message, &length));
 }

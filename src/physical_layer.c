@@ -10,7 +10,7 @@
 
 #include "data_link_layer.h"
 
-static EVENT_HANDLER(physical_ready) {
+EVENT_HANDLER(physical_ready) {
   struct FRAME in_frame;
   size_t length;
   int in_link;

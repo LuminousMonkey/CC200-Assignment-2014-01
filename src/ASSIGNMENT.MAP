@@ -1,4 +1,4 @@
-compile = "assignment.c"
+compile = "assignment.c application_layer.c network_layer.c data_link_layer.c physical_layer.c"
 
 host Pearce {
      x=60, y=60

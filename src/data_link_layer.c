@@ -16,7 +16,7 @@
 static void process_ack(struct FRAME in_frame, CnetTimerID last_timer);
 static void process_data(struct FRAME in_frame);
 
-static void transmit_frame(struct MESSAGE *message,
+static void transmit_frame(struct MESSAGE *packet,
                            enum FRAME_TYPE type,
                            size_t length,
                            int seqno);
@@ -25,7 +25,7 @@ static void transmit_frame(struct MESSAGE *message,
 static CnetTimerID last_timer = NULLTIMER;
 
 static int ack_expected = 0;
-static int next_frame_to_send = 0;
+//static int next_frame_to_send = 0;
 static int frame_expected = 0;
 
 /*
@@ -72,7 +72,7 @@ static void process_ack(struct FRAME in_frame, CnetTimerID last_timer) {
 static void process_data(struct FRAME in_frame) {
   if (in_frame.sequence == frame_expected) {
     printf("Up to application.\n");
-    int frame_length = in_frame.length;
+    size_t frame_length = in_frame.length;
     CHECK(CNET_write_application((char *) &in_frame.packet, &frame_length));
     frame_expected = 1 - frame_expected;
   } else {
@@ -82,7 +82,7 @@ static void process_data(struct FRAME in_frame) {
   transmit_frame(NULL, DL_ACK, 0, in_frame.sequence);
 }
 
-static void transmit_frame(struct MESSAGE *message,
+static void transmit_frame(struct MESSAGE *packet,
                            enum FRAME_TYPE type,
                            size_t length,
                            int seqno) {
@@ -100,7 +100,7 @@ static void transmit_frame(struct MESSAGE *message,
       break;
     case DL_DATA:
       printf("DATA transmitted, sequence: %d.\n", seqno);
-      memcpy(&frame_to_transmit.message, (char *) message, (int) length);
+      memcpy(&frame_to_transmit.packet, (char *) packet, (int) length);
 
       CnetTime timeout = FRAME_SIZE(frame_to_transmit) *
           ((CnetTime) 8000000 / linkinfo[link].bandwidth) +
