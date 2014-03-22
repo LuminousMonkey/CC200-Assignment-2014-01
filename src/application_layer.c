@@ -22,6 +22,9 @@
 // The length of the most recently send message.
 static size_t last_length = 0;
 
+// The most recently sent message.
+struct MESSAGE *last_message;
+
 /*
  * Application Ready
  *
@@ -35,7 +38,7 @@ EVENT_HANDLER(application_ready) {
 
   // Read the message from the application.
   CHECK(CNET_read_application(&destination_address,
-                              (char *) last_message,
+                              last_message,
                               &last_length));
 
   // Disable application message generation (TODO: Why?)
