@@ -18,6 +18,21 @@
 #define PACKET_HEADER_SIZE (sizeof(struct PACKET) - sizeof(struct MESSAGE))
 #define PACKET_SIZE(p) (PACKET_HEADER_SIZE + p.length)
 
+// Number of nodes in network.
+#define NUM_NODES 5
+
+/*
+ * Routing Table
+ *
+ * There's no need for dynamic routing, so we will just have a
+ * hardcoded static table for routing.
+ *
+ * Array based, first index is the current node number, then the
+ * target node number, the number given will be the link number to
+ * route the packet out onto.
+ */
+static int routing_table[NUM_NODES][NUM_NODES] = {{-1, }};
+
 void application_down_to_network(CnetAddr destination_address,
                                  struct MESSAGE *message, int length) {
 
