@@ -13,18 +13,7 @@
 #include <stdlib.h>
 
 #include "network_layer.h"
-
-enum FRAME_TYPE {
-  DL_DATA,
-  DL_ACK};
-
-struct FRAME {
-  enum FRAME_TYPE type;
-  size_t length;
-  int checksum;
-  int sequence;
-  struct PACKET packet;
-};
+#include "physical_layer.h"
 
 #define FRAME_HEADER_SIZE (sizeof(struct FRAME) -   \
                            sizeof(struct MESSAGE))

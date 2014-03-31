@@ -15,6 +15,20 @@
 
 #include <cnet.h>
 
+#include "network_layer.h"
+
+enum FRAME_TYPE {
+  DL_DATA,
+  DL_ACK};
+
+struct FRAME {
+  enum FRAME_TYPE type;
+  size_t length;
+  int checksum;
+  int sequence;
+  struct PACKET packet;
+};
+
 /*
  * Transmit the frame out onto the given physical link.
  */
@@ -23,4 +37,9 @@ void transmit_frame(int out_link,
                     enum FRAME_TYPE type,
                     size_t length,
                     int sequence_no);
+
+/*
+ * The corresponding "receive_frame" is actually an event fired by
+ * Cnet.
+ */
 #endif

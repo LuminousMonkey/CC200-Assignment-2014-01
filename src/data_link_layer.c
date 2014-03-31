@@ -23,8 +23,9 @@ static CnetTimerID last_timer = NULLTIMER;
 static int ack_expected = 0;
 //static int next_frame_to_send = 0;
 static int frame_expected = 0;
-static int last_link = 0;
 
+// We need to keep track of the last things send.
+static int last_link = 0;
 static struct FRAME *last_frame = NULL;
 static size_t last_length = 0;
 
