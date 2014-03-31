@@ -37,4 +37,11 @@ void up_to_datalink_from_physical(int in_link,
                                   struct FRAME *in_frame,
                                   int frame_length);
 
+/*
+ * Take the packet for the network layer and send it out on the
+ * required link.
+ */
+void down_to_datalink_from_network(int out_link,
+                                   struct PACKET *out_packet,
+                                   int packet_size);
 #endif

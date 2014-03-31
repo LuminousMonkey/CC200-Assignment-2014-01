@@ -1,35 +1,32 @@
 compile = "assignment.c application_layer.c network_layer.c data_link_layer.c physical_layer.c"
 
-host Pearce {
+host Karratha {
      x=60, y=60
      ostype = "sun"
-     link to Learmonth
+     link to Kalgoorlie
+     link to Perth
 }
 
-host Learmonth {
-     south of Pearce
+host Kalgoorlie {
+     east east of Karratha
      ostype = "linux"
-     link to Tindal
+     link to Perth
 }
 
-host Amberly {
-     south east east of Pearce
+host Geraldton {
+     south south of Karratha
      ostype = "linux"
-     link to Tindal
-     link to Curtin
+     link to Albany
+     link to Perth
 }
 
-host Tindal {
-     south south east of Pearce
+host Albany {
+     south south east east of Karratha
      ostype = "sun"
-     link to Learmonth
-     link to Amberly
-     link to Curtin
+     link to Perth
 }
 
-host Curtin {
-     south south south of Pearce
+host Perth {
+     south east of Karratha
      ostype = "linux"
-     link to Tindal
-     link to Amberly
 }

@@ -31,7 +31,41 @@
  * target node number, the number given will be the link number to
  * route the packet out onto.
  */
-static int routing_table[NUM_NODES][NUM_NODES] = {{-1, }};
+
+/*
+ *
+ * CN, TN, LN
+ * 0, 0, 0
+ * 0, 1, 1
+ * 0, 2, 2
+ * 0, 3, 2
+ * 0, 4, 2
+ * 1, 0, 1
+ * 1, 1, 0
+ * 1, 2, 2
+ * 1, 3, 2
+ * 1, 4, 2
+ * 2, 0, 1
+ * 2, 1, 2
+ * 2, 2, 0
+ * 2, 3, 3
+ * 2, 4, 4
+ * 3, 0, 2
+ * 3, 1, 2
+ * 3, 2, 2
+ * 3, 3, 0
+ * 3, 4, 1
+ * 4, 0, 2
+ * 4, 1, 2
+ * 4, 2, 2
+ * 4, 3, 1
+ * 4, 4, 0
+ */
+static int routing_table[NUM_NODES][NUM_NODES] = {{0, 1, 2, 2, 2},
+                                                  {1, 0, 2, 2, 2},
+                                                  {1, 2, 0, 3, 4},
+                                                  {2, 2, 2, 0, 1},
+                                                  {2, 2, 2, 1, 0}};
 
 void application_down_to_network(CnetAddr destination_address,
                                  struct MESSAGE *message, int length) {
@@ -49,6 +83,11 @@ void application_down_to_network(CnetAddr destination_address,
 
   // Look up routing table.
   // Send packet to correct link.
+  int link_to_use =
+      routing_table[outgoing_packet.source_address][outgoing_packet.destination_address];
+
+  down_to_datalink_from_network(link_to_use, &outgoing_packet,
+                                PACKET_SIZE(outgoing_packet));
 }
 
 void datalink_up_to_network(struct PACKET *in_packet) {

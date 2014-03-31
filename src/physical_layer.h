@@ -15,7 +15,12 @@
 
 #include <cnet.h>
 
-// Forward declarations
-EVENT_HANDLER(physical_ready);
-
+/*
+ * Transmit the frame out onto the given physical link.
+ */
+void transmit_frame(int out_link,
+                    struct FRAME *out_frame,
+                    enum FRAME_TYPE type,
+                    size_t length,
+                    int sequence_no);
 #endif
