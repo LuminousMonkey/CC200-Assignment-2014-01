@@ -13,13 +13,14 @@
 
 #include "application_layer.h"
 #include "network_layer.h"
-
-// Useful macros for sizing
-#define PACKET_HEADER_SIZE (sizeof(struct PACKET) - sizeof(struct MESSAGE))
-#define PACKET_SIZE(p) (PACKET_HEADER_SIZE + p.length)
+#include "data_link_layer.h"
 
 // Number of nodes in network.
 #define NUM_NODES 5
+
+#define PACKET_HEADER_SIZE (sizeof(struct Packet) - \
+                            sizeof(struct Message))
+#define PACKET_SIZE(p) (PACKET_HEADER_SIZE + p.length)
 
 /*
  * Routing Table
@@ -68,14 +69,11 @@ static int routing_table[NUM_NODES][NUM_NODES] = {{0, 1, 2, 2, 2},
                                                   {2, 2, 2, 1, 0}};
 
 void application_down_to_network(CnetAddr destination_address,
-                                 struct MESSAGE *message, int length) {
+                                 struct Message *message, size_t length) {
+
+  struct Packet outgoing_packet;
 
   // Check we can route?
-
-  // Create the packet.
-  // Wrap the message in the packet.
-  struct PACKET outgoing_packet;
-
   outgoing_packet.destination_address = destination_address;
   outgoing_packet.source_address = nodeinfo.address;
   outgoing_packet.length = length;
@@ -90,7 +88,7 @@ void application_down_to_network(CnetAddr destination_address,
                                 PACKET_SIZE(outgoing_packet));
 }
 
-void datalink_up_to_network(struct PACKET *in_packet) {
+void datalink_up_to_network(struct Packet *in_packet) {
   // Check the destination address.
   // If it's for us, move the message up to the application layer.
   // Otherwise find out which link to push it off to and send it.

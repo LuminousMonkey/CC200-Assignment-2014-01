@@ -17,14 +17,6 @@
 #include "application_layer.h"
 #include "network_layer.h"
 
-/* Node variables */
-
-// The length of the most recently send message.
-static size_t last_length = 0;
-
-// The most recently sent message.
-struct MESSAGE *last_message;
-
 /*
  * Application Ready
  *
@@ -34,22 +26,30 @@ struct MESSAGE *last_message;
 EVENT_HANDLER(application_ready) {
   CnetAddr destination_address;
 
-  last_length = sizeof(struct MESSAGE);
+  /*
+   * Outgoing message.
+   *
+   * We're not worried about it being cleaned up when this function
+   * exits because we'll just copy the message between every layer.
+   * It's just easier.
+   */
+  struct Message outgoing_message;
+  size_t length = sizeof(struct Message);
 
   // Read the message from the application.
   CHECK(CNET_read_application(&destination_address,
-                              last_message,
-                              &last_length));
+                              &outgoing_message,
+                              &length));
 
   // Disable application message generation (TODO: Why?)
   CNET_disable_application(ALLNODES);
 
   /* Call the network layer. */
   application_down_to_network(destination_address,
-                              last_message, last_length);
+                              &outgoing_message, length);
 }
 
-void network_up_to_application(struct MESSAGE *in_message, size_t length) {
+void network_up_to_application(struct Message *in_message, size_t length) {
   printf("Application received message.\n");
   CHECK(CNET_write_application((char *)in_message, &length));
 }

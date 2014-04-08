@@ -17,29 +17,32 @@
 
 #include "network_layer.h"
 
-enum FRAME_TYPE {
+enum FrameType {
   DL_DATA,
   DL_ACK};
 
-struct FRAME {
-  enum FRAME_TYPE type;
-  size_t length;
+struct Frame {
+  enum FrameType type;
   int checksum;
   int sequence;
-  struct PACKET packet;
+
+  // Size of the packet.
+  size_t length;
+  struct Packet packet;
 };
 
 /*
  * Transmit the frame out onto the given physical link.
  */
 void transmit_frame(int out_link,
-                    struct FRAME *out_frame,
-                    enum FRAME_TYPE type,
-                    size_t length,
+                    struct Frame *out_frame,
+                    enum FrameType type,
                     int sequence_no);
 
 /*
  * The corresponding "receive_frame" is actually an event fired by
  * Cnet.
  */
+EVENT_HANDLER(physical_ready);
+
 #endif

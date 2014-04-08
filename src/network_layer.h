@@ -17,12 +17,13 @@
 
 #include "application_layer.h"
 
-struct PACKET {
+struct Packet {
   CnetAddr destination_address;
   CnetAddr source_address;
 
+  // Length of the message.
   size_t length;
-  struct MESSAGE message;
+  struct Message message;
 };
 
 /* Declarations */
@@ -32,12 +33,12 @@ struct PACKET {
  * routed through the network.
  */
 void application_down_to_network(CnetAddr destination_address,
-                                 struct MESSAGE *message, int length);
+                                 struct Message *message, size_t length);
 
 /*
  * Take the packet from the datalink layer, either it's for us, or we
  * forward it onto the next node.
  */
-void datalink_up_to_network(struct PACKET *in_packet);
+void datalink_up_to_network(struct Packet *in_packet);
 
 #endif

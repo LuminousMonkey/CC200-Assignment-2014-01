@@ -11,11 +11,11 @@
 #include "data_link_layer.h"
 
 EVENT_HANDLER(physical_ready) {
-  struct FRAME in_frame;
+  struct Frame in_frame;
   size_t length;
   int in_link;
 
-  length = sizeof(struct FRAME);
+  length = sizeof(struct Frame);
 
   // Read in the frame from the physical link.
   CHECK(CNET_read_physical(&in_link, (char *)&in_frame, &length));

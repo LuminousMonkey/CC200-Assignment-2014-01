@@ -15,22 +15,20 @@
 #include "network_layer.h"
 #include "physical_layer.h"
 
-#define FRAME_HEADER_SIZE (sizeof(struct FRAME) -   \
-                           sizeof(struct MESSAGE))
-#define FRAME_SIZE(f) (FRAME_HEADER_SIZE + f.length)
+EVENT_HANDLER(timeouts);
 
 /*
  * Just pass the physical frame up to the data link layer.
  */
 void up_to_datalink_from_physical(int in_link,
-                                  struct FRAME *in_frame,
-                                  int frame_length);
+                                  struct Frame *in_frame,
+                                  size_t frame_length);
 
 /*
  * Take the packet for the network layer and send it out on the
  * required link.
  */
-void down_to_datalink_from_network(int out_link,
-                                   struct PACKET *out_packet,
-                                   int packet_size);
+void down_to_datalink_from_network(int out_link, struct Packet *out_packet,
+                                   size_t length);
+
 #endif

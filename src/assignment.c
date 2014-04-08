@@ -8,22 +8,17 @@
 #include <stdlib.h>
 
 #include "application_layer.h"
+#include "data_link_layer.h"
 #include "physical_layer.h"
 
 EVENT_HANDLER(reboot_node) {
   // Allocate the memory for the application message.
-  last_message = calloc(1, sizeof(struct MESSAGE));
+  CHECK(CNET_set_handler(EV_APPLICATIONREADY, application_ready, 0));
+  CHECK(CNET_set_handler(EV_PHYSICALREADY, physical_ready, 0));
+  CHECK(CNET_set_handler(EV_TIMER1, timeouts, 0));
 
-  if (last_message != NULL) {
-
-    CHECK(CNET_set_handler(EV_APPLICATIONREADY, application_ready, 0));
-    CHECK(CNET_set_handler(EV_PHYSICALREADY, physical_ready, 0));
-
-    // Start the traffic
-    if (nodeinfo.nodenumber == 0) {
-      CNET_enable_application(ALLNODES);
-    }
-  } else {
-    printf("Error allocating message memory.\n");
+  // Start the traffic
+  if (nodeinfo.nodenumber == 0) {
+    CNET_enable_application(ALLNODES);
   }
 }
