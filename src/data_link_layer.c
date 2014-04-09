@@ -86,9 +86,8 @@ void down_to_datalink_from_network(int out_link, struct Packet *out_packet,
  * Event handler for frame ACKs that are timing out.
  */
 EVENT_HANDLER(timeouts) {
-  printf("Timeout, seq=%d\n", ack_expected[last_link]);
-
   // Retry sending
+  printf("Timeout, DATA(%d) out on link: %d\n", ack_expected[last_link], last_link);
   transmit_frame(last_link, &outgoing_frame, DL_DATA, ack_expected[last_link]);
 }
 
@@ -114,7 +113,7 @@ static void process_data(struct Frame *in_frame, int in_link) {
     printf("Ignored\n");
   }
 
-  printf("Transmitting ACK to link: %d\n", in_link);
+  printf("Transmitting ACK(%d) to link: %d\n", in_frame->sequence, in_link);
   transmit_frame(in_link, &outgoing_frame, DL_ACK, in_frame->sequence);
 }
 
@@ -129,10 +128,10 @@ void transmit_frame(int out_link,
 
   switch (type) {
     case DL_ACK:
-      printf("ACK transmitted, sequence: %d.\n", sequence_no);
+      printf("ACK(%d) sent out on link %d.\n", sequence_no, out_link);
       break;
     case DL_DATA:
-      printf("DATA transmitted, sequence: %d.\n", sequence_no);
+      printf("DATA(%d) sent out on link %d.\n", sequence_no, out_link);
 
       CnetTime timeout = FRAME_SIZE(frame_to_transmit) *
           ((CnetTime) 8000000 / linkinfo[out_link].bandwidth) +
@@ -148,7 +147,7 @@ void transmit_frame(int out_link,
   last_length = FRAME_SIZE(frame_to_transmit);
   frame_to_transmit->checksum =
       CNET_crc32((unsigned char *) frame_to_transmit, (int) last_length);
-  CHECK(CNET_write_physical(out_link,
+  CHECK(CNET_write_physical_reliable(out_link,
                             (void *) frame_to_transmit,
                             &last_length));
 }
