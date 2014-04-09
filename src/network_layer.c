@@ -85,6 +85,8 @@ void application_down_to_network(CnetAddr destination_address,
   // Send packet to correct link.
   int outgoing_link = link_to_use(&outgoing_packet);
 
+  printf("Sending packet out on link: %d\n", outgoing_link);
+
   down_to_datalink_from_network(outgoing_link, &outgoing_packet,
                                 PACKET_SIZE(outgoing_packet));
 }
@@ -95,9 +97,15 @@ void datalink_up_to_network(struct Packet *in_packet) {
   // Otherwise find out which link to push it off to and send it.
 
   if (in_packet->destination_address == nodeinfo.address) {
+    printf("Packet Destination: %d\n", in_packet->destination_address);
+
     network_up_to_application(&in_packet->message, in_packet->length);
   } else {
     int outgoing_link = link_to_use(in_packet);
+
+    printf("Packet for Node: %d\n", in_packet->destination_address);
+    printf("Sending out link: %d\n", outgoing_link);
+
     down_to_datalink_from_network(outgoing_link, in_packet,
                                   PACKET_SIZE((*in_packet)));
 
@@ -108,5 +116,5 @@ void datalink_up_to_network(struct Packet *in_packet) {
  * Given a packet, return the link to use.
  */
 static int link_to_use(struct Packet *packet) {
-  return routing_table[packet->source_address][packet->destination_address];
+  return routing_table[nodeinfo.address][packet->destination_address];
 }

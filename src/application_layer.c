@@ -44,6 +44,8 @@ EVENT_HANDLER(application_ready) {
   // Disable application message generation (TODO: Why?)
   CNET_disable_application(ALLNODES);
 
+  printf("Generated message for node: %d\n", destination_address);
+
   /* Call the network layer. */
   application_down_to_network(destination_address,
                               &outgoing_message, length);
@@ -52,4 +54,5 @@ EVENT_HANDLER(application_ready) {
 void network_up_to_application(struct Message *in_message, size_t length) {
   printf("Application received message.\n");
   CHECK(CNET_write_application((char *)in_message, &length));
+  CNET_enable_application(ALLNODES);
 }

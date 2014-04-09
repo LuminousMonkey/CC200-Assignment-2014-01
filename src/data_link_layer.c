@@ -18,15 +18,19 @@
 #define FRAME_SIZE(f) (FRAME_HEADER_SIZE + f->length)
 
 // Forward declarations
-static void process_ack(struct Frame *in_frame, CnetTimerID last_timer);
+static void process_ack(struct Frame *in_frame, CnetTimerID last_timer, int in_link);
 static void process_data(struct Frame *in_frame, int in_link);
 
 // Local node variables
 static CnetTimerID last_timer = NULLTIMER;
 
-static int ack_expected = 0;
-static int next_frame_to_send = 0;
-static int frame_expected = 0;
+// Stop and wait sequence numbers, need to be organised on a per link
+// basis.
+#define MAX_NO_LINKS 5
+
+static int ack_expected[MAX_NO_LINKS] = {0,0,0,0,0};
+static int next_frame_to_send[MAX_NO_LINKS] = {0,0,0,0,0};
+static int frame_expected[MAX_NO_LINKS] = {0,0,0,0,0};
 
 // We need to keep track of the last things send.
 static int last_link = 0;
@@ -52,7 +56,7 @@ void up_to_datalink_from_physical(int in_link,
     // Process depending on the frame type.
     switch (in_frame->type) {
       case DL_ACK:
-        process_ack(in_frame, last_timer);
+        process_ack(in_frame, last_timer, in_link);
         break;
       case DL_DATA:
         process_data(in_frame, in_link);
@@ -61,10 +65,9 @@ void up_to_datalink_from_physical(int in_link,
         printf("Error: Unexpected frame type.\n");
     }
   } else {
-    printf("CRC in is: %d\n", in_checksum);
-
-    printf("Expected is: %d\n", CNET_crc32((unsigned char *)&in_frame, frame_length));
+    printf("-------------------------------------------------\n");
     printf("\t\t\t\tBAD checksum - frame ignored.\n");
+    printf("-------------------------------------------------\n");
   }
 }
 
@@ -74,38 +77,49 @@ void down_to_datalink_from_network(int out_link, struct Packet *out_packet,
   outgoing_frame.length = length;
   memcpy(&outgoing_frame.packet, out_packet, length);
 
+  printf("Network -> Data Link. Seq: %d\n", next_frame_to_send[out_link]);
+
   // This is a static one as we need to keep a copy around incase of retransmit.
-  transmit_frame(out_link, &outgoing_frame, DL_DATA, next_frame_to_send);
+  transmit_frame(out_link, &outgoing_frame, DL_DATA, next_frame_to_send[out_link]);
+  next_frame_to_send[out_link] = 1 - next_frame_to_send[out_link];
+
+  printf("Network -> Data Link. Updated Seq: %d\n", next_frame_to_send[out_link]);
 }
 
 /*
  * Event handler for frame ACKs that are timing out.
  */
 EVENT_HANDLER(timeouts) {
-  printf("timeout, seq=%d\n", ack_expected);
+  printf("Timeout, seq=%d\n", ack_expected[last_link]);
 
   // Retry sending
-  transmit_frame(last_link, &outgoing_frame, DL_DATA, ack_expected);
+  transmit_frame(last_link, &outgoing_frame, DL_DATA, ack_expected[last_link]);
 }
 
-static void process_ack(struct Frame *in_frame, CnetTimerID last_timer) {
-  if (in_frame->sequence == ack_expected) {
+static void process_ack(struct Frame *in_frame, CnetTimerID last_timer, int in_link) {
+  if (in_frame->sequence == ack_expected[in_link]) {
     printf("\t\t\t\tACK received, sequence: %d.\n", in_frame->sequence);
     CNET_stop_timer(last_timer);
-    ack_expected = 1 - ack_expected;
-    CNET_enable_application(ALLNODES);
+    ack_expected[in_link] = 1 - ack_expected[in_link];
+  } else {
+    printf("Incorrect ACK sequence received: %d, expected %d\n",
+           in_frame->sequence, ack_expected[in_link]);
   }
 }
 
 static void process_data(struct Frame *in_frame, int in_link) {
-  if (in_frame->sequence == frame_expected) {
+  printf("Processing Data packet\n");
+  if (in_frame->sequence == frame_expected[in_link]) {
     printf("Up to Network Layer.\n");
     datalink_up_to_network(&in_frame->packet);
-    frame_expected = 1 - frame_expected;
+    frame_expected[in_link] = 1 - frame_expected[in_link];
   } else {
+    printf("Incorrect Frame sequence received: %d, expected %d\n",
+           in_frame->sequence, frame_expected[in_link]);
     printf("Ignored\n");
   }
 
+  printf("Transmitting ACK to link: %d\n", in_link);
   transmit_frame(in_link, &outgoing_frame, DL_ACK, in_frame->sequence);
 }
 
@@ -139,8 +153,7 @@ void transmit_frame(int out_link,
   last_length = FRAME_SIZE(frame_to_transmit);
   frame_to_transmit->checksum =
       CNET_crc32((unsigned char *) frame_to_transmit, (int) last_length);
-  printf("CRC is: %d\n", frame_to_transmit->checksum);
-  CHECK(CNET_write_physical_reliable(out_link,
+  CHECK(CNET_write_physical(out_link,
                             (void *) frame_to_transmit,
                             &last_length));
 }
