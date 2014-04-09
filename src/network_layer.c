@@ -68,6 +68,8 @@ static int routing_table[NUM_NODES][NUM_NODES] = {{0, 1, 2, 2, 2},
                                                   {2, 2, 2, 0, 1},
                                                   {2, 2, 2, 1, 0}};
 
+static int link_to_use(struct Packet *in_packet);
+
 void application_down_to_network(CnetAddr destination_address,
                                  struct Message *message, size_t length) {
 
@@ -81,10 +83,9 @@ void application_down_to_network(CnetAddr destination_address,
 
   // Look up routing table.
   // Send packet to correct link.
-  int link_to_use =
-      routing_table[outgoing_packet.source_address][outgoing_packet.destination_address];
+  int outgoing_link = link_to_use(&outgoing_packet);
 
-  down_to_datalink_from_network(link_to_use, &outgoing_packet,
+  down_to_datalink_from_network(outgoing_link, &outgoing_packet,
                                 PACKET_SIZE(outgoing_packet));
 }
 
@@ -93,7 +94,19 @@ void datalink_up_to_network(struct Packet *in_packet) {
   // If it's for us, move the message up to the application layer.
   // Otherwise find out which link to push it off to and send it.
 
-  if (1 == 1) {
+  if (in_packet->destination_address == nodeinfo.address) {
     network_up_to_application(&in_packet->message, in_packet->length);
+  } else {
+    int outgoing_link = link_to_use(in_packet);
+    down_to_datalink_from_network(outgoing_link, in_packet,
+                                  PACKET_SIZE((*in_packet)));
+
   }
+}
+
+/*
+ * Given a packet, return the link to use.
+ */
+static int link_to_use(struct Packet *packet) {
+  return routing_table[packet->source_address][packet->destination_address];
 }

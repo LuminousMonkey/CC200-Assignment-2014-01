@@ -18,7 +18,7 @@ EVENT_HANDLER(physical_ready) {
   length = sizeof(struct Frame);
 
   // Read in the frame from the physical link.
-  CHECK(CNET_read_physical(&in_link, (char *)&in_frame, &length));
+  CHECK(CNET_read_physical(&in_link, &in_frame, &length));
 
   // Pass it up to the datalink layer.
   up_to_datalink_from_physical(in_link, &in_frame, length);

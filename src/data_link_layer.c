@@ -40,13 +40,13 @@ void up_to_datalink_from_physical(int in_link,
                                   struct Frame *in_frame,
                                   size_t frame_length) {
 
-  unsigned int in_checksum = in_frame->checksum;
+  uint32_t in_checksum = in_frame->checksum;
 
   // Checksum was calculated with the checksum field of 0.
   in_frame->checksum = 0;
 
   // Check if the packet is corrupted.
-  if (CNET_crc32((unsigned char *)&in_frame,
+  if (CNET_crc32((void *) in_frame,
                  frame_length) == in_checksum) {
 
     // Process depending on the frame type.
@@ -138,9 +138,9 @@ void transmit_frame(int out_link,
 
   last_length = FRAME_SIZE(frame_to_transmit);
   frame_to_transmit->checksum =
-      CNET_crc32((unsigned char *) &frame_to_transmit, (int) last_length);
-  printf("CRC is: %d\n", frame_to_transmit);
-  CHECK(CNET_write_physical(out_link,
-                            (char *) &frame_to_transmit,
+      CNET_crc32((unsigned char *) frame_to_transmit, (int) last_length);
+  printf("CRC is: %d\n", frame_to_transmit->checksum);
+  CHECK(CNET_write_physical_reliable(out_link,
+                            (void *) frame_to_transmit,
                             &last_length));
 }

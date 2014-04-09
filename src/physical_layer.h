@@ -14,6 +14,7 @@
 #define PHYSICAL_LAYER_H_
 
 #include <cnet.h>
+#include <stdint.h>
 
 #include "network_layer.h"
 
@@ -23,7 +24,7 @@ enum FrameType {
 
 struct Frame {
   enum FrameType type;
-  int checksum;
+  uint32_t checksum;
   int sequence;
 
   // Size of the packet.
