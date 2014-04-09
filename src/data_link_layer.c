@@ -66,7 +66,7 @@ void up_to_datalink_from_physical(int in_link,
     }
   } else {
     printf("-------------------------------------------------\n");
-    printf("\t\t\t\tBAD checksum - frame ignored.\n");
+    printf("BAD checksum - frame ignored.\n");
     printf("-------------------------------------------------\n");
   }
 }
@@ -77,13 +77,9 @@ void down_to_datalink_from_network(int out_link, struct Packet *out_packet,
   outgoing_frame.length = length;
   memcpy(&outgoing_frame.packet, out_packet, length);
 
-  printf("Network -> Data Link. Seq: %d\n", next_frame_to_send[out_link]);
-
   // This is a static one as we need to keep a copy around incase of retransmit.
   transmit_frame(out_link, &outgoing_frame, DL_DATA, next_frame_to_send[out_link]);
   next_frame_to_send[out_link] = 1 - next_frame_to_send[out_link];
-
-  printf("Network -> Data Link. Updated Seq: %d\n", next_frame_to_send[out_link]);
 }
 
 /*
@@ -108,13 +104,12 @@ static void process_ack(struct Frame *in_frame, CnetTimerID last_timer, int in_l
 }
 
 static void process_data(struct Frame *in_frame, int in_link) {
-  printf("Processing Data packet\n");
   if (in_frame->sequence == frame_expected[in_link]) {
-    printf("Up to Network Layer.\n");
+    printf("\t\t\t\tDATA received, sequence: %d.\n", in_frame->sequence);
     datalink_up_to_network(&in_frame->packet);
     frame_expected[in_link] = 1 - frame_expected[in_link];
   } else {
-    printf("Incorrect Frame sequence received: %d, expected %d\n",
+    printf("\t\t\t\tIncorrect Frame sequence received: %d, expected %d\n",
            in_frame->sequence, frame_expected[in_link]);
     printf("Ignored\n");
   }
