@@ -13,7 +13,7 @@
 #include "data_link_layer.h"
 #include "physical_layer.h"
 
-#define FRAME_HEADER_SIZE (sizeof(struct Frame) -   \
+#define FRAME_HEADER_SIZE (sizeof(struct Frame) - \
                            sizeof(struct Packet))
 #define FRAME_SIZE(f) (FRAME_HEADER_SIZE + f->length)
 
@@ -25,7 +25,7 @@ static void process_data(struct Frame *in_frame, int in_link);
 static CnetTimerID last_timer = NULLTIMER;
 
 // Stop and wait sequence numbers, need to be organised on a per link
-// basis.
+// basis. Be sure to +1 because links start at 1.
 #define MAX_NO_LINKS 5
 
 static int ack_expected[MAX_NO_LINKS] = {0,0,0,0,0};
