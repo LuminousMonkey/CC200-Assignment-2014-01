@@ -15,7 +15,16 @@
 #include "network_layer.h"
 #include "physical_layer.h"
 
+/*
+ * Event handler for timeouts when waiting for an ACK.
+ */
 EVENT_HANDLER(timeouts);
+
+/*
+ * The data link later has some queues that need to be setup before
+ * they can be used.
+ */
+void init_data_link_layer();
 
 /*
  * Just pass the physical frame up to the data link layer.
@@ -28,7 +37,8 @@ void up_to_datalink_from_physical(int in_link,
  * Take the packet for the network layer and send it out on the
  * required link.
  */
-void down_to_datalink_from_network(int out_link, struct Packet *out_packet,
+void down_to_datalink_from_network(int out_link,
+                                   struct Packet *out_packet,
                                    size_t length);
 
 #endif

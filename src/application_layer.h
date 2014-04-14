@@ -11,6 +11,8 @@
 
 #include <cnet.h>
 
+// Temp fix to stop clang from raising stupid error
+
 /*
  * Application Messages
  *

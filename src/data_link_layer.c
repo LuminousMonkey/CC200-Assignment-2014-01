@@ -11,6 +11,7 @@
 #include <string.h>
 
 #include "data_link_layer.h"
+#include "packet_queue.h"
 #include "physical_layer.h"
 
 #define FRAME_HEADER_SIZE (sizeof(struct Frame) - \
@@ -32,10 +33,25 @@ static int ack_expected[MAX_NO_LINKS] = {0,0,0,0,0};
 static int next_frame_to_send[MAX_NO_LINKS] = {0,0,0,0,0};
 static int frame_expected[MAX_NO_LINKS] = {0,0,0,0,0};
 
+/*
+ * Queue per link, for packets to wait while waiting for a pending
+ * ACK.
+ */
+static struct PacketQueue packet_queue[MAX_NO_LINKS];
+
 // We need to keep track of the last things send.
 static int last_link = 0;
 static struct Frame outgoing_frame;
 static size_t last_length = 0;
+
+/*
+ * Init data link layer structures.
+ */
+void init_data_link_layer() {
+  for (int i = 0; i < MAX_NO_LINKS; ++i) {
+    setup_queue(&packet_queue[i]);
+  }
+}
 
 /*
  * Takes the raw physical frame, and start processing it.
@@ -71,15 +87,26 @@ void up_to_datalink_from_physical(int in_link,
   }
 }
 
-void down_to_datalink_from_network(int out_link, struct Packet *out_packet,
+void down_to_datalink_from_network(int out_link,
+                                   struct Packet *out_packet,
                                    size_t length) {
-  // Build the frame.
-  outgoing_frame.length = length;
-  memcpy(&outgoing_frame.packet, out_packet, length);
 
-  // This is a static one as we need to keep a copy around incase of retransmit.
-  transmit_frame(out_link, &outgoing_frame, DL_DATA, next_frame_to_send[out_link]);
-  next_frame_to_send[out_link] = 1 - next_frame_to_send[out_link];
+  /*
+   * If we're waiting on an ACK, then just queue up the packet and
+   * we'll process it later.
+   */
+  if (ack_expected[out_link] != next_frame_to_send[out_link]) {
+    printf("Waiting on ACK. Queuing packet.\n");
+    add_to_queue(&packet_queue[out_link], out_packet, length);
+  } else {
+    // Build the frame.
+    outgoing_frame.length = length;
+    memcpy(&outgoing_frame.packet, out_packet, length);
+
+    // This is a static one as we need to keep a copy around incase of retransmit.
+    transmit_frame(out_link, &outgoing_frame, DL_DATA, next_frame_to_send[out_link]);
+    next_frame_to_send[out_link] = 1 - next_frame_to_send[out_link];
+  }
 }
 
 /*
@@ -96,6 +123,19 @@ static void process_ack(struct Frame *in_frame, CnetTimerID last_timer, int in_l
     printf("\t\t\t\tACK received, sequence: %d.\n", in_frame->sequence);
     CNET_stop_timer(last_timer);
     ack_expected[in_link] = 1 - ack_expected[in_link];
+
+    /*
+     * Check the queue for any pending packets, and send the first one
+     * in the queue.
+     */
+    struct Packet next_packet_to_send;
+    size_t length = next_packet(&packet_queue[in_link], &next_packet_to_send);
+
+    if (length != 0) {
+      // Just call down to datalink again, double copying, but easier to follow.
+      printf("Sending off queued packet.\n");
+      down_to_datalink_from_network(in_link, &next_packet_to_send, length);
+    }
   } else {
     printf("Incorrect ACK sequence received: %d, expected %d\n",
            in_frame->sequence, ack_expected[in_link]);

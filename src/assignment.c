@@ -14,7 +14,8 @@
 EVENT_HANDLER(draw_frame);
 
 EVENT_HANDLER(reboot_node) {
-  // Allocate the memory for the application message.
+  init_data_link_layer();
+
   CHECK(CNET_set_handler(EV_APPLICATIONREADY, application_ready, 0));
   CHECK(CNET_set_handler(EV_PHYSICALREADY, physical_ready, 0));
   CHECK(CNET_set_handler(EV_TIMER1, timeouts, 0));
