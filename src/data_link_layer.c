@@ -120,7 +120,8 @@ EVENT_HANDLER(timeouts) {
 
 static void process_ack(struct Frame *in_frame, CnetTimerID last_timer, int in_link) {
   if (in_frame->sequence == ack_expected[in_link]) {
-    printf("\t\t\t\tACK received, sequence: %d.\n", in_frame->sequence);
+    printf("\t\t\t\tACK received. Link: %d, sequence: %d.\n",
+	   in_link, in_frame->sequence);
     CNET_stop_timer(last_timer);
     ack_expected[in_link] = 1 - ack_expected[in_link];
 
@@ -137,19 +138,21 @@ static void process_ack(struct Frame *in_frame, CnetTimerID last_timer, int in_l
       down_to_datalink_from_network(in_link, &next_packet_to_send, length);
     }
   } else {
-    printf("Incorrect ACK sequence received: %d, expected %d\n",
-           in_frame->sequence, ack_expected[in_link]);
+    printf("\t\t\t\tIncorrect ACK. Link: %d, sequence: %d, expected %d\n",
+           in_link, in_frame->sequence, ack_expected[in_link]);
   }
 }
 
 static void process_data(struct Frame *in_frame, int in_link) {
   if (in_frame->sequence == frame_expected[in_link]) {
-    printf("\t\t\t\tDATA received, sequence: %d.\n", in_frame->sequence);
-    datalink_up_to_network(&in_frame->packet);
+    printf("\t\t\t\tDATA received. Link: %d, sequence: %d.\n",
+	   in_link,
+	   in_frame->sequence);
     frame_expected[in_link] = 1 - frame_expected[in_link];
+    datalink_up_to_network(&in_frame->packet);
   } else {
-    printf("\t\t\t\tIncorrect Frame sequence received: %d, expected %d\n",
-           in_frame->sequence, frame_expected[in_link]);
+    printf("\t\t\t\tDATA received. Link: %d, sequence: %d, expected %d\n",
+           in_link, in_frame->sequence, frame_expected[in_link]);
     printf("Ignored\n");
   }
 

@@ -24,6 +24,7 @@ static struct PacketQueueNode *create_new_node(struct Packet *to_copy,
   // can't recover from.
   assert(new_node);
 
+  new_node->next = NULL;
   new_node->length = length;
   memcpy(&new_node->packet, to_copy, sizeof(struct Packet));
 
