@@ -1,22 +1,25 @@
 compile = "assignment.c application_layer.c network_layer.c data_link_layer.c physical_layer.c packet_queue.c"
 
 probframecorrupt = 4
-probframeloss = 4
+probframeloss = 6
 
 host Karratha {
+     address = 0
      x=60, y=60
-     ostype = "sun"
+     ostype = "hurd"
      link to Kalgoorlie
      link to Perth
 }
 
 host Kalgoorlie {
+     address = 1
      east east of Karratha
-     ostype = "linux"
+     ostype = "sgi"
      link to Perth
 }
 
 host Geraldton {
+     address = 3
      south south of Karratha
      ostype = "linux"
      link to Albany
@@ -24,12 +27,14 @@ host Geraldton {
 }
 
 host Albany {
+     address = 4
      south south east east of Karratha
-     ostype = "sun"
+     ostype = "macosx"
      link to Perth
 }
 
 host Perth {
+     address = 2
      south east of Karratha
-     ostype = "linux"
+     ostype = "sun"
 }

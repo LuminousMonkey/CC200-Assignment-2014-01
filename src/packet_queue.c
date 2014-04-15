@@ -72,8 +72,6 @@ void debug_print_queue(struct PacketQueue *queue) {
   assert(queue != NULL);
   current_node = queue->head;
 
-  printf("-------\n");
-
   int position = 0;
 
   while (current_node != NULL) {
@@ -81,6 +79,4 @@ void debug_print_queue(struct PacketQueue *queue) {
            current_node->packet.message_number);
     current_node = current_node->next;
   }
-
-  printf("-------\n");
 }

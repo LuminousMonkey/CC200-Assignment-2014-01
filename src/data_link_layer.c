@@ -217,7 +217,7 @@ static void transmit_frame(int out_link,
        * the timer is for so if it expires we know which link to send
        * the packet back out on.
        */
-      timers[out_link - 1] = CNET_start_timer(EV_TIMER1, 3 * timeout, out_link);
+      timers[out_link - 1] = CNET_start_timer(EV_TIMER1, 4 * timeout, out_link);
       break;
     default:
       printf("Unexpected frame type.\n");
@@ -237,6 +237,7 @@ static void transmit_frame(int out_link,
 void debug_data_link_layer() {
   for (int current_queue = 0; current_queue < MAX_NO_LINKS; current_queue++) {
     printf("Queue for Link: %d\n", current_queue + 1);
+    printf("------------------\n");
 
     debug_print_queue(&packet_queue[current_queue]);
   }
