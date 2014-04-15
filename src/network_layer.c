@@ -6,6 +6,8 @@
  * Network Layer
  *
  * Description:
+ *   For details about what public functions are for, check the header
+ *   file.
  */
 
 #include <cnet.h>
@@ -15,73 +17,91 @@
 #include "network_layer.h"
 #include "data_link_layer.h"
 
-// Number of nodes in network.
-#define NUM_NODES 5
-
-#define PACKET_HEADER_SIZE (sizeof(struct Packet) - \
-                            sizeof(struct Message))
-#define PACKET_SIZE(p) (PACKET_HEADER_SIZE + p.length)
-
 /*
  * Routing Table
  *
  * There's no need for dynamic routing, so we will just have a
- * hardcoded static table for routing.
+ * hardcoded static table for routing. This, and the NUM_NODES
+ * constant must be updated if there's any changes in the topography
+ * file.
  *
- * Array based, first index is the current node number, then the
- * target node number, the number given will be the link number to
- * route the packet out onto.
+ * The routing table is a simple matrix, the first index is the
+ * current node address, and the second index is the destination node
+ * address. This will return the link number to send the packet out
+ * onto.
  */
+#define NUM_NODES 5
+
 static int routing_table[NUM_NODES][NUM_NODES] = {{0, 1, 2, 2, 2},
                                                   {1, 0, 2, 2, 2},
                                                   {1, 2, 0, 3, 4},
                                                   {2, 2, 2, 0, 1},
                                                   {2, 2, 2, 1, 0}};
 
+/*
+ * Forward function declarations.
+ */
 static int link_to_use(struct Packet *in_packet);
+static size_t packet_size(struct Packet *packet);
 
 void application_down_to_network(CnetAddr destination_address,
-                                 struct Message *message, size_t length) {
+                                 struct Message *message,
+                                 size_t length) {
 
+  // Stack automatic safe because it gets copied.
   struct Packet outgoing_packet;
 
-  // Check we can route?
+  // Build the packet.
   outgoing_packet.destination_address = destination_address;
   outgoing_packet.source_address = nodeinfo.address;
   outgoing_packet.length = length;
-
   memcpy(&outgoing_packet.message, message, length);
 
-  // Look up routing table.
-  // Send packet to correct link.
-  int outgoing_link = link_to_use(&outgoing_packet);
-
-  printf("Sending packet out on link: %d.\n", outgoing_link);
-
-  down_to_datalink_from_network(outgoing_link, &outgoing_packet,
-                                PACKET_SIZE(outgoing_packet));
+  // Routing table lookup.
+  down_to_datalink_from_network(link_to_use(&outgoing_packet),
+                                &outgoing_packet,
+                                packet_size(&outgoing_packet));
 }
 
 void datalink_up_to_network(struct Packet *in_packet) {
-  // Check the destination address.
-  // If it's for us, move the message up to the application layer.
-  // Otherwise find out which link to push it off to and send it.
-
   if (in_packet->destination_address == nodeinfo.address) {
-    printf("\t\t\t\tSource address: %d\n", in_packet->source_address);
+    // Packet is for this node.
     network_up_to_application(&in_packet->message, in_packet->length);
   } else {
-    int outgoing_link = link_to_use(in_packet);
+    // Not for this node, forward it on.
+    printf("Forwarding packet for Node: %d\n",
+           in_packet->destination_address);
 
-    printf("Packet for Node: %d\n", in_packet->destination_address);
-    down_to_datalink_from_network(outgoing_link, in_packet,
-                                  PACKET_SIZE((*in_packet)));
+    down_to_datalink_from_network(link_to_use(in_packet),
+                                  in_packet,
+                                  packet_size(in_packet));
   }
 }
 
 /*
- * Given a packet, return the link to use.
+ * Link to use
+ *
+ * Takes a packet and will return which link to send that packet out
+ * onto.
  */
 static int link_to_use(struct Packet *packet) {
   return routing_table[nodeinfo.address][packet->destination_address];
+}
+
+/*
+ * Packet size
+ *
+ * Given a pointer to the packet, it will return the total used size
+ * for the packet. This is why the application message must be at the
+ * end of the Package struct.
+ *
+ * This was a macro, but application_down_to_network had a struct
+ * directly while datalink_up_to_network uses a pointer. This resulted
+ * in a messy (*in_packet) inside the macro args.
+ */
+static size_t packet_size(struct Packet *packet) {
+  const size_t packet_header_size = sizeof(struct Packet) -
+      sizeof(struct Message);
+
+  return packet_header_size + packet->length;
 }

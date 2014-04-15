@@ -25,6 +25,7 @@ static void transmit_frame(int out_link,
                            struct Frame *frame_to_transmit,
                            enum FrameType type,
                            int sequence_no);
+static void send_off_queued_packet(int out_link);
 
 // Stop and wait sequence numbers, need to be organised on a per link
 // basis. Be sure to +1 because links start at 1.
@@ -52,32 +53,25 @@ static struct Frame outgoing_frame[MAX_NO_LINKS];
  */
 static struct PacketQueue packet_queue[MAX_NO_LINKS];
 
-/*
- * Init data link layer structures.
- */
 void init_data_link_layer() {
-  for (int i = 0; i < MAX_NO_LINKS; ++i) {
+  for (int i = 0; i < nodeinfo.nlinks; ++i) {
     setup_queue(&packet_queue[i]);
   }
 }
 
-/*
- * Takes the raw physical frame, and start processing it.
- */
 void up_to_datalink_from_physical(int in_link,
                                   struct Frame *in_frame,
                                   size_t frame_length) {
 
+  // Checksum was calculated with the checksum field of 0. So save the
+  // incoming checksum first and clear the checksum so we can
+  // calculate it.
   uint32_t in_checksum = in_frame->checksum;
-
-  // Checksum was calculated with the checksum field of 0.
   in_frame->checksum = 0;
 
   // Check if the packet is corrupted.
-  if (CNET_crc32((void *) in_frame,
-                 frame_length) == in_checksum) {
-
-    // Process depending on the frame type.
+  if (CNET_crc32((void *) in_frame, frame_length) == in_checksum) {
+    // Good checksum!
     switch (in_frame->type) {
       case DL_ACK:
         process_ack(in_frame, timers[in_link - 1], in_link);
@@ -93,6 +87,36 @@ void up_to_datalink_from_physical(int in_link,
   }
 }
 
+void down_to_datalink_from_network(int out_link,
+                                   struct Packet *out_packet,
+                                   size_t length) {
+  add_to_queue(&packet_queue[out_link - 1], out_packet, length);
+
+  /*
+   * If we're waiting on an ACK, we don't send the packet yet, we will
+   * send it when the ACK is received.
+   */
+  if (ack_expected[out_link - 1] == next_frame_to_send[out_link - 1]) {
+    send_off_queued_packet(out_link);
+  }
+}
+
+/*
+ * Build and send frame.
+ *
+ * Builds the frame up to be transmitted by the physical layer. The
+ * data link layer keeps a copy of the last transmitted frame, because
+ * the last frame will need to be transmitted if there's a timeout
+ * waiting for an ACK.
+ *
+ * This function takes care of that, however, beaware that this will
+ * override the previous frame, so this function should only be called
+ * if the node is not waiting for an ACK on the given link.
+ *
+ * out_link - Link to send frame out on.
+ * out_packet - Packet to be sent out.
+ * length - Size of the packet passed in.
+ */
 static void build_and_send_frame(int out_link,
                                  struct Packet *out_packet,
                                  size_t length) {
@@ -124,26 +148,6 @@ static void send_off_queued_packet(int out_link) {
     build_and_send_frame(out_link, &next_packet_to_send, length);
   } else {
     printf("No packets to send.\n");
-  }
-}
-
-void down_to_datalink_from_network(int out_link,
-                                   struct Packet *out_packet,
-                                   size_t length) {
-
-  /*
-   * Always add the packet to the queue, then send off the first
-   * packet on that queue.
-   */
-  printf("Adding packet to queue.\n");
-  add_to_queue(&packet_queue[out_link - 1], out_packet, length);
-
-  /*
-   * If we're waiting on an ACK, we don't send the packet yet, we will
-   * send it when the ACK is received.
-   */
-  if (ack_expected[out_link - 1] == next_frame_to_send[out_link - 1]) {
-    send_off_queued_packet(out_link);
   }
 }
 
@@ -231,14 +235,17 @@ static void transmit_frame(int out_link,
                             &last_length));
 }
 
-/*
- *  Prints out the data link layer info.
- */
 void debug_data_link_layer() {
-  for (int current_queue = 0; current_queue < MAX_NO_LINKS; current_queue++) {
-    printf("Queue for Link: %d\n", current_queue + 1);
-    printf("------------------\n");
-
-    debug_print_queue(&packet_queue[current_queue]);
+  printf("Status for links.\n");
+  printf("+------+------------------+----------------+--------------------+\n");
+  printf("| Link | Ack Seq Expected | Next Frame Seq | Frame Seq Expected |\n");
+  printf("+------+------------------+----------------+--------------------+\n");
+  for (int current_link = 0; current_link < nodeinfo.nlinks; current_link++) {
+    printf("|  %d   |        %d         |        %d       |         %d          |\n",
+           current_link + 1,
+           ack_expected[current_link],
+           next_frame_to_send[current_link],
+           frame_expected[current_link]);
+    printf("+------+------------------+----------------+--------------------+\n");
   }
 }

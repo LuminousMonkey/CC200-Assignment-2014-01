@@ -21,6 +21,7 @@ EVENT_HANDLER(reboot_node) {
   CHECK(CNET_set_handler(EV_PHYSICALREADY, physical_ready, 0));
   CHECK(CNET_set_handler(EV_TIMER1, timeouts, 0));
   CHECK(CNET_set_handler(EV_DEBUG0, showstate, 0));
+  CHECK(CNET_set_debug_string(EV_DEBUG0, "Show status"));
   CHECK(CNET_set_handler(EV_DRAWFRAME, draw_frame, 0));
 
   // Start the traffic
