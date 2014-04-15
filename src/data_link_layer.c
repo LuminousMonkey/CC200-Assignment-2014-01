@@ -14,10 +14,6 @@
 #include "packet_queue.h"
 #include "physical_layer.h"
 
-#define FRAME_HEADER_SIZE (sizeof(struct Frame) - \
-                           sizeof(struct Packet))
-#define FRAME_SIZE(f) (FRAME_HEADER_SIZE + f->length)
-
 // Forward declarations
 static void process_ack(struct Frame *in_frame, CnetTimerID last_timer, int in_link);
 static void process_data(struct Frame *in_frame, int in_link);
@@ -26,6 +22,7 @@ static void transmit_frame(int out_link,
                            enum FrameType type,
                            int sequence_no);
 static void send_off_queued_packet(int out_link);
+static size_t frame_size(struct Frame *frame);
 
 // Stop and wait sequence numbers, need to be organised on a per link
 // basis. Be sure to +1 because links start at 1.
@@ -208,7 +205,7 @@ static void transmit_frame(int out_link,
     case DL_DATA:
       printf("DATA(%d) sent out on link %d.\n", sequence_no, out_link);
 
-      CnetTime timeout = FRAME_SIZE(frame_to_transmit) *
+      CnetTime timeout = frame_size(frame_to_transmit) *
           ((CnetTime) 8000000 / linkinfo[out_link].bandwidth) +
           linkinfo[out_link].propagationdelay;
 
@@ -223,7 +220,7 @@ static void transmit_frame(int out_link,
       printf("Unexpected frame type.\n");
   }
 
-  size_t last_length = FRAME_SIZE(frame_to_transmit);
+  size_t last_length = frame_size(frame_to_transmit);
   frame_to_transmit->checksum =
       CNET_crc32((unsigned char *) frame_to_transmit, (int) last_length);
   CHECK(CNET_write_physical(out_link,
@@ -244,4 +241,18 @@ void debug_data_link_layer() {
            frame_expected[current_link]);
     printf("+------+------------------+----------------+--------------------+\n");
   }
+}
+
+/*
+ * Frame size
+ *
+ * Given a pointer to the frame, it will return the total used size
+ * for the frame. This is why the Packet must be at the end of the
+ * Frame struct.
+ */
+static size_t frame_size(struct Frame *frame) {
+  const size_t frame_header_size = sizeof(struct Frame) -
+      sizeof(struct Packet);
+
+  return frame_header_size + frame->length;
 }
