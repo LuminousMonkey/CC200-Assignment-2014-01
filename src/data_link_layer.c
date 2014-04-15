@@ -144,10 +144,7 @@ static void send_off_queued_packet(int out_link) {
 
   if (length != 0) {
     // Just call down to datalink again, double copying, but easier to follow.
-    printf("Sending off queued packet.\n");
     build_and_send_frame(out_link, &next_packet_to_send, length);
-  } else {
-    printf("No packets to send.\n");
   }
 }
 
@@ -191,7 +188,6 @@ static void process_data(struct Frame *in_frame, int in_link) {
     printf("\t\t\t\tIgnored\n");
   }
 
-  printf("Transmitting ACK(%d) to link: %d\n", in_frame->sequence, in_link);
   transmit_frame(in_link, &outgoing_frame[in_link - 1],
                  DL_ACK, in_frame->sequence);
 }

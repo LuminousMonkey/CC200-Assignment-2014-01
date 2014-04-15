@@ -29,13 +29,10 @@ EVENT_HANDLER(application_ready) {
                               &outgoing_message,
                               &length));
 
-  printf("Generated message for node: %d\n", destination_address);
-
   application_down_to_network(destination_address,
                               &outgoing_message, length);
 }
 
 void network_up_to_application(struct Message *in_message, size_t length) {
-  printf("\t\t\t\tApplication received message.\n");
   CHECK(CNET_write_application((char *)in_message, &length));
 }
