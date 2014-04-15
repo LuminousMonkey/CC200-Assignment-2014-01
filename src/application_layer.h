@@ -41,6 +41,7 @@ EVENT_HANDLER(application_ready);
  * Called when the network layer has determined that the message is
  * for the application running on the node.
  */
-void network_up_to_application(struct Message *in_message, size_t length);
+void network_up_to_application(const struct Message *const in_message,
+                               size_t length);
 
 #endif

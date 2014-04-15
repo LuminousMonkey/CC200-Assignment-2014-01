@@ -27,7 +27,13 @@ struct PacketQueueNode {
   struct Packet packet;
 };
 
-void setup_queue(struct PacketQueue *queue);
+/*
+ * Setup queue
+ *
+ * Sets the queue up ready to be used. Has to be called before any
+ * other functions to operate on the queue.
+ */
+void setup_queue(struct PacketQueue *const queue);
 
 /*
  * Add packet
@@ -37,9 +43,9 @@ void setup_queue(struct PacketQueue *queue);
  * This will copy the packet to the list, so the packet that's added
  * does not need to be kept around.
  */
-void add_to_queue(struct PacketQueue *queue,
-                  struct Packet *to_be_added,
-                  size_t length);
+void add_to_queue(struct PacketQueue *const queue,
+                  const struct Packet *const to_be_added,
+                  const size_t length);
 
 /*
  * Get next packet
@@ -47,8 +53,10 @@ void add_to_queue(struct PacketQueue *queue,
  * Remove the next packet from the queue.
  *
  * It will copy the packet into Packet struct given by out_packet
- * pointer. If there is no packet, then the function will return false.
+ * pointer. If there is no packet, then the function will return
+ * false.
  */
-size_t next_packet(struct PacketQueue *queue, struct Packet *out_packet);
+size_t next_packet(struct PacketQueue *const queue,
+                   struct Packet *const out_packet);
 
 #endif

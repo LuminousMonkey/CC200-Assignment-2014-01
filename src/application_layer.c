@@ -33,6 +33,7 @@ EVENT_HANDLER(application_ready) {
                               &outgoing_message, length);
 }
 
-void network_up_to_application(struct Message *in_message, size_t length) {
+void network_up_to_application(const struct Message *const in_message,
+                               size_t length) {
   CHECK(CNET_write_application((char *)in_message, &length));
 }

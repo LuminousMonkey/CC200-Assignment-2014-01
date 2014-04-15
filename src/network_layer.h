@@ -40,14 +40,14 @@ struct Packet {
  * Take the message from the application and process it so it can be
  * routed through the network.
  */
-void application_down_to_network(CnetAddr destination_address,
-                                 struct Message *message,
-                                 size_t length);
+void application_down_to_network(const CnetAddr destination_address,
+                                 const struct Message *const message,
+                                 const size_t length);
 
 /*
  * Take the packet from the datalink layer, either it's for us, or we
  * forward it onto the next node.
  */
-void datalink_up_to_network(struct Packet *in_packet);
+void datalink_up_to_network(const struct Packet *const in_packet);
 
 #endif

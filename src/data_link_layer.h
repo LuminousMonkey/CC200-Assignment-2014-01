@@ -45,7 +45,7 @@ void init_data_link_layer();
  * in_frame - Pointer to frame that arrived.
  * frame_length - Size of the frame.
  */
-void up_to_datalink_from_physical(int in_link,
+void up_to_datalink_from_physical(const int in_link,
                                   struct Frame *in_frame,
                                   size_t frame_length);
 
@@ -63,9 +63,9 @@ void up_to_datalink_from_physical(int in_link,
  * out_packet - Pointer to packet to be sent.
  * length - Size of the packet.
  */
-void down_to_datalink_from_network(int out_link,
-                                   struct Packet *out_packet,
-                                   size_t length);
+void down_to_datalink_from_network(const int out_link,
+                                   const struct Packet *const out_packet,
+                                   const size_t length);
 
 /*
  * Timeouts
