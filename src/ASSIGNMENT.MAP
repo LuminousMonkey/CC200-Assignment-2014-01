@@ -1,5 +1,8 @@
 compile = "assignment.c application_layer.c network_layer.c data_link_layer.c physical_layer.c packet_queue.c"
 
+probframecorrupt = 4
+probframeloss = 4
+
 host Karratha {
      x=60, y=60
      ostype = "sun"

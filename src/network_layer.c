@@ -32,36 +32,6 @@
  * target node number, the number given will be the link number to
  * route the packet out onto.
  */
-
-/*
- *
- * CN, TN, LN
- * 0, 0, 0
- * 0, 1, 1
- * 0, 2, 2
- * 0, 3, 2
- * 0, 4, 2
- * 1, 0, 1
- * 1, 1, 0
- * 1, 2, 2
- * 1, 3, 2
- * 1, 4, 2
- * 2, 0, 1
- * 2, 1, 2
- * 2, 2, 0
- * 2, 3, 3
- * 2, 4, 4
- * 3, 0, 2
- * 3, 1, 2
- * 3, 2, 2
- * 3, 3, 0
- * 3, 4, 1
- * 4, 0, 2
- * 4, 1, 2
- * 4, 2, 2
- * 4, 3, 1
- * 4, 4, 0
- */
 static int routing_table[NUM_NODES][NUM_NODES] = {{0, 1, 2, 2, 2},
                                                   {1, 0, 2, 2, 2},
                                                   {1, 2, 0, 3, 4},
@@ -79,13 +49,14 @@ void application_down_to_network(CnetAddr destination_address,
   outgoing_packet.destination_address = destination_address;
   outgoing_packet.source_address = nodeinfo.address;
   outgoing_packet.length = length;
+
   memcpy(&outgoing_packet.message, message, length);
 
   // Look up routing table.
   // Send packet to correct link.
   int outgoing_link = link_to_use(&outgoing_packet);
 
-  printf("Sending packet out on link: %d\n", outgoing_link);
+  printf("Sending packet out on link: %d.\n", outgoing_link);
 
   down_to_datalink_from_network(outgoing_link, &outgoing_packet,
                                 PACKET_SIZE(outgoing_packet));
@@ -97,18 +68,14 @@ void datalink_up_to_network(struct Packet *in_packet) {
   // Otherwise find out which link to push it off to and send it.
 
   if (in_packet->destination_address == nodeinfo.address) {
-    printf("Packet Destination: %d\n", in_packet->destination_address);
-
+    printf("\t\t\t\tSource address: %d\n", in_packet->source_address);
     network_up_to_application(&in_packet->message, in_packet->length);
   } else {
     int outgoing_link = link_to_use(in_packet);
 
     printf("Packet for Node: %d\n", in_packet->destination_address);
-    printf("Sending out link: %d\n", outgoing_link);
-
     down_to_datalink_from_network(outgoing_link, in_packet,
                                   PACKET_SIZE((*in_packet)));
-
   }
 }
 

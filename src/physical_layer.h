@@ -33,14 +33,6 @@ struct Frame {
 };
 
 /*
- * Transmit the frame out onto the given physical link.
- */
-void transmit_frame(int out_link,
-                    struct Frame *out_frame,
-                    enum FrameType type,
-                    int sequence_no);
-
-/*
  * The corresponding "receive_frame" is actually an event fired by
  * Cnet.
  */

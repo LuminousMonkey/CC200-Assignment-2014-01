@@ -51,4 +51,11 @@ void add_to_queue(struct PacketQueue *queue,
  */
 size_t next_packet(struct PacketQueue *queue, struct Packet *out_packet);
 
+/*
+ * Print Debug Info
+ *
+ * When called, will output the current information about the given queue.
+ */
+void debug_print_queue(struct PacketQueue *queue);
+
 #endif

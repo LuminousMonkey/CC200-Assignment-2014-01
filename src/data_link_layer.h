@@ -41,4 +41,9 @@ void down_to_datalink_from_network(int out_link,
                                    struct Packet *out_packet,
                                    size_t length);
 
+/*
+ * For printing out debug information about the data link layer.
+ */
+void debug_data_link_layer();
+
 #endif

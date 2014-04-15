@@ -21,6 +21,8 @@ struct Packet {
   CnetAddr destination_address;
   CnetAddr source_address;
 
+  int message_number;
+
   // Length of the message.
   size_t length;
   struct Message message;

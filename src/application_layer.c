@@ -49,6 +49,6 @@ EVENT_HANDLER(application_ready) {
 }
 
 void network_up_to_application(struct Message *in_message, size_t length) {
-  printf("Application received message.\n");
+  printf("\t\t\t\tApplication received message.\n");
   CHECK(CNET_write_application((char *)in_message, &length));
 }
