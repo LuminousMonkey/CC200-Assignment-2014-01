@@ -1,2 +1,7 @@
+.PHONY: all
+
+all: clean
+	cnet ASSIGNMENT.MAP
+
 clean:
-	rm *.o *.cnet
+	rm -f *.o *.cnet
