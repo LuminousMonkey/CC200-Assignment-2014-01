@@ -42,6 +42,6 @@ EVENT_HANDLER(application_ready);
  * for the application running on the node.
  */
 void network_up_to_application(const struct Message *const in_message,
-                               size_t length);
+                               const size_t length);
 
 #endif

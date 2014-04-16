@@ -34,6 +34,8 @@ EVENT_HANDLER(application_ready) {
 }
 
 void network_up_to_application(const struct Message *const in_message,
-                               size_t length) {
-  CHECK(CNET_write_application((char *)in_message, &length));
+                               const size_t length) {
+  // Because CNET writes to length variable, breaks const correctness.
+  size_t temp_length = length;
+  CHECK(CNET_write_application((char *)in_message, &temp_length));
 }
