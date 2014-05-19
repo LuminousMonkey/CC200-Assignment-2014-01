@@ -14,23 +14,6 @@
 #define PHYSICAL_LAYER_H_
 
 #include <cnet.h>
-#include <stdint.h>
-
-#include "network_layer.h"
-
-enum FrameType {
-  DL_DATA,
-  DL_ACK};
-
-struct Frame {
-  enum FrameType type;
-  uint32_t checksum;
-  int sequence;
-
-  // Size of the packet.
-  size_t length;
-  struct Packet packet;
-};
 
 /*
  * The corresponding "receive_frame" is actually an event fired by

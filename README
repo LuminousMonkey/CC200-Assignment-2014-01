@@ -1,0 +1,54 @@
+CC200 Assignment
+================
+
+Author: Mike Aldred.
+Student No: 09831542.
+
+How to run
+----------
+
+It is assumed that the assignment is being run on the Curtin lab
+machines. All that is required is to run "make". "make clean" may be
+required first if old compiled files have been left around.
+
+If running on a computer other than the Curtin labs. Make sure the
+CNET variable in the makefile is updated to the correct CNET path
+(version 3.2.1) and CNETPATH has been set correctly.
+
+Source
+------
+
+The source code and topology file is located in the src/ directory,
+with the code being separated into the protocol different layers.
+These layers are as you would expect from the network stack. Each
+layer (with some differences described below) having two publicly
+available functions. One for going down to the layer below, and one
+going above.
+
+assignment.c
+  Contains the CNET reboot_node, debug, and draw_frame
+  functions. These aren't part of the protocol, but are CNET
+  housekeeping.
+
+application_layer.c
+  Contains the application_ready function that CNET calls when there
+  is a message generated at a node. Also has the function for passing
+  received messages to an application.
+
+physical_layer.c
+  Only has the physical_ready function, since CNET provides the
+  CNET_write_physical function, it is just called directly from the
+  data link layer.
+
+Notes
+-----
+
+The draw frames feature of CNET has been implemented. Right click on a
+link, and select "Draw Frames" to bring up a window that will show a
+frame being transmitted from one node to another. However, please
+note, that you must open a node window first by left clicking on a
+node. (Any node is fine) Otherwise a bug in CNET will cause it to quit.
+
+Also, once started CNET_disable_application is never called, this
+means that there is an increased chance of timeouts and incorrect
+sequence numbers occurring even with perfect physical connections.
