@@ -25,6 +25,24 @@
 #include "network_layer.h"
 #include "physical_layer.h"
 
+// We only use two types of frames.
+enum FrameType {
+  DL_DATA,
+  DL_ACK};
+
+/*
+ * The frame, this wraps the packet from the network layer.
+ */
+struct Frame {
+  enum FrameType type;
+  uint32_t checksum;
+  int sequence;
+
+  // Size of the packet.
+  size_t length;
+  struct Packet packet;
+};
+
 /*
  * Init Data Link Layer
  *

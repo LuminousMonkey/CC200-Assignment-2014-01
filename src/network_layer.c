@@ -64,8 +64,14 @@ void application_down_to_network(const CnetAddr destination_address,
 }
 
 void datalink_up_to_network(const struct Packet *const in_packet) {
+  printf("Node: %d. Src: %d. Dst: %d. ",
+         nodeinfo.address,
+         in_packet->source_address,
+         in_packet->destination_address);
+
   if (in_packet->destination_address == nodeinfo.address) {
     // Packet is for this node.
+    printf("Arrived at destination node.\n");
     network_up_to_application(&in_packet->message, in_packet->length);
   } else {
     // Not for this node, forward it on.
