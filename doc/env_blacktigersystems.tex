@@ -1,0 +1,51 @@
+\startenvironment env_blacktigersystems
+\project project_blacktigersystems
+
+% Always use English
+\mainlanguage[en]
+
+% Fonts
+\usetypescriptfile[type-blacktiger]
+\usetypescript[blacktiger]
+
+\setupbodyfont[blacktiger,rm]
+
+% Pagination
+\setupheadertexts
+  [{\getmarking[chapter]}] [{page \pagenumber}]
+  [{page \pagenumber}] [{\getmarking[chapter]}]
+
+\setuppagenumbering[location={footer,margin}]
+\setuppagenumbering
+  [alternative=doublesided]
+
+\setupsectionblock[frontpart][page=no, number=no]
+\setupsectionblock[bodypart][page=yes,number=yes]
+
+\definestructureconversionset[frontpart:pagenumber][][romannumerals]
+
+\startsectionblockenvironment[frontpart]
+  \setuppagenumbering[location=]
+\stopsectionblockenvironment
+
+% Inter paragraph spacing
+\setupwhitespace[medium]
+
+% Default Colours
+\definecolor[dc-chapter][r=0.09,g=0.21,b=0.36]
+\definecolor[dc-section][r=0.31,g=0.50,b=0.74]
+
+\setupcolors[state=start]
+\setuphead[chapter][header=empty,alternative=margin,color=dc-chapter,page=mychapterpagebreak,textstyle=\ss]
+\setuphead[section][alternative=margin,color=dc-section,textstyle=\ss]
+
+%\setupheader[style=bold]
+\setupheadertexts[][chapter]
+\setupfootertexts[\getvariable{document}{title}][]
+
+% Table of contents
+\setupcombinedlist[content][level=4,alternative=c,]
+
+\setupinteraction[state=start,color=dc-section,contrastcolor=dc-section]
+
+\stopenvironment

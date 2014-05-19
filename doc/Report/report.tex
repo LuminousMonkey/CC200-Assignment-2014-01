@@ -1,0 +1,54 @@
+\startproduct report
+\project project_blacktigersystems
+
+\setvariables[document]
+  [title={Computer Communications 200\crlf Assignment},author={Aldred, Michael\crlf 09831542}]
+
+\starttext
+
+\startstandardmakeup
+  \startalignment[flushright]
+  {
+  \blank[1cm]
+  \tfd{\sansbold \getvariable{document}{title}\crlf}}
+  \blank[4cm]
+  \getvariable{document}{author}\crlf
+  \date[][d,month,year]
+  \blank[2cm]
+  {I declare the following report and assignment is purely my own work.}
+\stopalignment
+
+\stopstandardmakeup
+
+\startbodymatter
+
+\chapter{Source code organisation}
+The source code and topology file is located in the src/ directory, with the code being separated into the protocol different layers. The layers have both a .h file, and .c file. These layers are as you would expect from the network stack. Each layer (with some differences described below) having two publicly available functions. One for going down to the layer below, and one going above. Each layer doing pretty much what you expect.
+
+\section{Application Layer}
+This represents the application, and is the first port of call when CNET generates a message to be sent out across the network. Since CNET handles the application layer, this is really just a thin wrapper around the CNET functions for passing messages to and from the network layer.
+
+\section{Network Layer}
+Routing the packets through the network, it's a very simple static route. The static routes are looked up via a two dimensional array and sent off onto the correct link. Messages for the node are passed up to the application layer.
+
+\section{Data link layer}
+This is the layer where the majority of the difficult work is done. This is where packets get made into frames, frames send, checked, acknowledged, resent, and given warm cuddles. CNET itself provides the physical layer, so this implementation just calls the CNET provided function.
+
+\section{Packet queue}
+This implementation of the stop and wait protocol does not disable new message generation when a node is sending a message. In order to avoid needing to do this, a very simple queue implementation is used, CNET doesn't provide a "cleanup" event, so there's no function to delete the entire list.
+
+\section{Physical layer}
+Only a thin wrapper where the function for the \quotation{physical_ready} event is held, it just passes the frame up to the data link layer.
+
+\chapter{Implementations}
+
+\section{Getting messages out of sequence}
+One of the biggest problems that occurred was that nodes would receive messages out of order. This was caused by a node generating a message while it had forwarded a packet. Because the node was waiting for an ACK frame, sending out another DATA frame would cause all sorts of problems with the sequence numbers being shifted out of order.
+
+The solution, was to have a FIFO queue per link. When the datalink layer gets a packet from the network layer, it's placed on a queue for that link. If the node isn't waiting for an ACK, then the first packet on the queue is sent down the link as a DATA frame.
+
+When a DATA frame is sent, then the node will wait for an ACK frame back on that link (and that link only).
+
+\stopbodymatter
+\stoptext
+\stopproduct

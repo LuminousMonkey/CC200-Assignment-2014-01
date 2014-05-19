@@ -1,0 +1,54 @@
+\enableregime[utf]
+
+\definefontfeature [concourse] [kern=yes]
+
+\starttypescript [sans] [concourse]
+  \setups[font:fallback:sans]
+  \definefontsynonym [Sans] [Concourse-Regular] [features=default]
+  \definefontsynonym [SansItalic] [Concourse-Italic] [features=default]
+  \definefontsynonym [SansBold] [Concourse-Bold] [features=default]
+  \definefontsynonym [SansBoldItalic] [Concourse-Bold Italic] [features=default]
+\stoptypescript
+
+\starttypescript [sans] [concourse]
+  \definefontsynonym [Concourse-Regular] [name:Concourse T6 Regular] [features=default]
+  \definefontsynonym [Concourse-Italic] [name:Concourse T6 Italic] [features=default]
+  \definefontsynonym [Concourse-Bold] [name:Concourse T6 Bold] [features=default]
+  \definefontsynonym [Concourse-BoldItalic] [name:Concourse T6 Bold Italic] [features=default]
+\stoptypescript
+
+\definefontfeature [equity] [kern=yes]
+
+\starttypescript [serif] [equity]
+  \setups[font:fallback:serif]
+  \definefontsynonym [Serif] [Equity-Regular] [features=default]
+  \definefontsynonym [SerifItalic] [Equity-Italic] [features=default]
+  \definefontsynonym [SerifBold] [Equity-Bold] [features=default]
+  \definefontsynonym [SerifBoldItalic] [Equity-Bold Italic] [features=default]
+  \definefontsynonym [SerifCaps] [EquityCaps-Regular] [features=default]
+  \definefontsynonym [SerifCapsBold] [EquityCaps-Bold] [features=default]
+\stoptypescript
+
+\starttypescript [serif] [equity]
+  \definefontsynonym [Equity-Regular] [name:Equity Text B Regular][features=default]
+  \definefontsynonym [Equity-Italic] [name:Equity Text B Italic][features=default]
+  \definefontsynonym [Equity-Bold] [name:Equity Text B Bold][features=default]
+  \definefontsynonym [Equity-Bold Italic] [name:Equity Text B Bold Italic][features=default]
+  \definefontsynonym [EquityCaps-Regular] [name:Equity Caps B Regular][features=default]
+  \definefontsynonym [EquityCaps-Bold] [name:Equity Caps B Bold][features=default]
+\stoptypescript
+
+\starttypescript [mono] [monaco]
+  \definefontsynonym [Typewriter] [Monaco-Regular][features=default]
+\stoptypescript
+
+\starttypescript [mono] [monaco]
+  \setups[font:fallback:mono]
+  \definefontsynonym [Monaco-Regular] [name:Monaco][features=default]
+\stoptypescript
+
+\starttypescript [blacktiger]
+  \definetypeface [blacktiger] [ss] [sans] [concourse] [default]
+  \definetypeface [blacktiger] [rm] [serif] [equity] [default]
+  \definetypeface [blacktiger] [tt] [mono] [monaco] [default]
+\stoptypescript
