@@ -45,9 +45,9 @@ Only a thin wrapper where the function for the \quotation{physical_ready} event 
 \section{Getting messages out of sequence}
 One of the biggest problems that occurred was that nodes would receive messages out of order. This was caused by a node generating a message while it had forwarded a packet. Because the node was waiting for an ACK frame, sending out another DATA frame would cause all sorts of problems with the sequence numbers being shifted out of order.
 
-The solution, was to have a FIFO queue per link. When the datalink layer gets a packet from the network layer, it's placed on a queue for that link. If the node isn't waiting for an ACK, then the first packet on the queue is sent down the link as a DATA frame.
+The solution, was to have a FIFO queue per link. When the datalink layer gets a packet from the network layer, it's placed on a queue for that link. If the node isn't waiting for an ACK, then the first packet on the queue is sent down the link as a DATA frame. With this, and static routing, the application messages will not arrive out of order.
 
-When a DATA frame is sent, then the node will wait for an ACK frame back on that link (and that link only).
+These link queues are boundless, and the poor efficiency of stop and wait, means that these queues will grow indefinitely, however this doesn't prove to be a problem on the lab machines which have plenty of RAM.
 
 \stopbodymatter
 \stoptext
