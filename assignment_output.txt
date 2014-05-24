@@ -1,0 +1,190 @@
+				DATA received. Link: 1, sequence: 0.
+Node: 1. Src: 0. Dst: 1. ArDATA(1) sent out on link 2.
+				DATA received. Link: 2, sequence: 0.DATA(0) sent out on link 2.
+				ACK received. Link: 2, sequence: 0.
+				DATA received. Link: 2, sequence: 0.
+Node: 3. Src: 2. Dst: 3. Arrived at destination node.
+ACK(0) sent out on link 2.
+				DATA received. Link: 2, sequence: 1.
+Node: 3. Src: 1. Dst: 3. Arrived at destination node.
+ACK(1) sent out on link 2.
+DATA(1) sent out on link 2.
+				DATA received. Link: 2, sequence: 1, expected 0
+				Ignored
+ACK(1) sent out on link 2.
+				BAD checksum - frame ignored.
+				DATA received. Link: 2, sequence: 1, expected 0
+				Ignored
+ACK(1) sent out on link 2.
+DATA(0) sent out on link 1.
+				DATA received. Link: 2, sequence: 0.
+Node: 3. Src: 1. Dst: 3. Arrived at destination node.
+ACK(0) sent out on link 2.
+				ACK received. Link: 1, sequence: 0.
+DATA(1) sent out on link 1.
+				BAD checksum - frame ignored.
+				DATA received. Link: 2, sequence: 0, expected 1
+				Ignored
+ACK(0) sent out on link 2.
+				DATA received. Link: 2, sequence: 1.
+Node: 3. Src: 2. Dst: 3. Arrived at destination node.
+ACK(1) sent out on link 2.
+Timeout, DATA(1) out on link: 1
+DATA(1) sent out on link 1.
+Timeout, DA				DATA received. Link: 1, sequence: 1, expected				DATA received. Link: 2, sequence: 1, expected 0
+				Ignored
+ACK(1) sent out on link 2.
+Timeout, DATA(1) out on link: 1
+DATA(1) sent ou				DATA rece				DATA received. Link: 1, sequence: 0.
+Node: 3. Src: 4. Dst: 3. Arrived at d				ACK received. Link: 2, sequence: 0.
+DATA				ACK received. Link: 1, sequence: 1.
+DATA(0) sent out on linkTimeout, DATA(1) out on link: 2
+DATA(1) sent out on link 2.
+				ACK received. Link: 2, sequence: 1.
+DATA(0) sent out on link 2.
+DATA(1) sent out on link 1.
+				BAD checksum - frame ignored.
+				ACK received. Link: 2, sequence: 0.
+DATA(1) sent out on link 2.
+				DATA received. Link: 2, sequence: 0.
+Node: 4. Src: 0. Dst: 4. Arrived at destination node.
+ACK(0) sent out on link								DATA received. Link: 1, sequence: 0.
+Node: 4. Src: 3. Dst: 4. Arrived at destination node.
+ACK(0) sent out on link 1.
+				ACK received. Link: 2, sequence: 1.
+DATA(0) sent out on link				DATA received. Link: 2, sequence: 0.
+Node: 3. Src: 1. Dst: 3. Arrived at destination node.
+				ACK received. Link: 1, 				ACK received. Link: 1, sequence: 0.
+DATA(1) sent out on link 1.
+Timeout, DATA(1) out on link: 2
+DATA(1) sent out on link 2.
+			DATA received. Link: 2, sequence: 0.
+Node: 0. Src: 4. Dst: 0. Arrived at destination node.
+ACK(0) sent out on link 2.
+Timeout, DATA(1) out on link: 2
+DATA(1) sent out on link 2.
+				ACK received. Link: 2, sequence: 1.
+				Incorrect ACK. Link: 1, sequence: 0, expected 1
+				DATA received. Link: 2, sequence: 1.
+Node: 0. Src: 2. Dst: 0. Arrived at destination node.
+ACK(1) sent out on link 2.
+				ACK received. Link: 1, sequence: 1.
+DATA(0) sent out on link 1.
+				DATA received. Link: 1, sequence: 1.
+Node: 0. Src: 1. Dst: 0. Arrived at destination node.
+ACK(1) sent out on link 1.
+				DATA received. Link: 1, sequence: 1, expected 0
+				Ignored
+ACK(1) sent out on link 1.
+: 1
+DATA(1) sent out on link 1.
+Timeout, DATA(1) out on link: 1
+DATA(1) sent out on link 1.
+				DATA received. Link: 2, sequence: 1.
+Node: 1. Src: 2. Dst: 1. Arrived at destination node.
+ACK(1) sent out on link 2.
+ for Node: 0
+ACK(1) sent out on link 3.
+				DATA received. Link: 1, sequence: 0.
+Node: 2. Src: 0. Dst: 3. Forwarding packet for Node: 3
+ACK(0) sent out on link 1.
+Timeout, DATA(1) out on link: 3
+DATA(1) sent out on link 3.
+				DATA received. Link: 2, sequence: 0.
+Node: 2. Src: 1. Dst: 3. Forwarding packet for Node: 3
+ACK(0) sent out on link 2.
+				ACK received. Link: 3, sequence: 1.
+DATA(0) sent out on link 3.
+				DATA received. Link: 4, sequence: 0.
+Node: 2. Src: 4. Dst: 0. Forwarding packet for Node: 0
+ACK(0) sent out on link 4.
+				ACK received. Link: 1, sequence: 1.
+DATA(0) sent out on link 1.
+				DATA received. Link: 1, sequence: 0, expected 1
+				Ignored
+ACK(0) sent out on link 1.
+Timeout, DATA(1) out on link: 4
+DATA(1) sent out on link 4.
+Timeout, DATA(0) out on link: 3
+DATA(0) sent out on link 3.
+				ACK received. Link: 3, sequence: 0.
+DATA(1) sent out on link 3.
+				BAD checksum - frame ignored.
+				BAD checksum - frame ignored.
+				DATA received. Link: 4, sequence: 1.
+Node: 2. Src: 4. Dst: 1. Forwarding packet for Node: 1
+DATA(0) sent out on link 2.
+ACK(1) sent out on link 4.
+				Incorrect ACK. Link: 3, sequence: 0, expected 1
+Timeout, DATA(1) out on link: 3
+DATA(1) sent out on link 3.
+				ACK received. Link: 4, sequence: 1.
+				ACK received. Link: 1, sequence: 0.
+DATA(1) sent out on link 1.
+				ACK received. Link: 3, sequence: 1.
+DATA(0) sent out on link 3.
+				DATA received. Link: 4, sequence: 0.
+Node: 2. Src: 4. Dst: 2. Arrived at destination node.
+ACK(0) sent out on link 4.
+				ACK received. Link: 2, sequence: 0.
+DATA(1) sent out on link 2.
+				DATA received. Link: 3, sequence: 1, expected 0
+				Ignored
+ACK(1) sent out on link 3.
+				BAD checksum - frame ignored.
+				ACK received. Link: 1, sequence: 1.
+DATA(0) sent out on link 1.
+				DATA received. Link: 2, sequence: 1.
+Node: 2. Src: 1. Dst: 2. Arrived at destination node.
+ACK(1) sent out on link 2.
+				Incorrect ACK. Link: 3, sequence: 1, expected 0
+				DATA received. Link: 4, sequence: 1.
+Node: 2. Src: 4. Dst: 2. Arrived at destination node.
+ACK(1) sent out on link 4.
+				DATA received. Link: 1, sequence: 1.
+Node: 2. Src: 0. Dst: 4. Forwarding packet for Node: 4
+DATA(0) sent out on link 4.
+ACK(1) sent out on link 1.
+				ACK received. Link: 1, sequence: 0.
+DATA(1) sent out on link 1.
+				ACK received. Link: 3, sequence: 0.
+DATA(1) sent out on link 3.
+				DATA received. Link: 2, sequence: 0.
+Node: 2. Src: 1. Dst: 2. Arrived at destination node.
+ACK(0) sent out on link 2.
+				DATA received. Link: 4, sequence: 0.
+Node: 2. Src: 4. Dst: 1. Forwarding packet for Node: 1
+ACK(0) sent out on link 4.
+Timeout, DATA(0) out on link: 4
+DATA(0) sent out on link 4.
+				DATA received. Link: 1, sequence: 1, expected 0
+				Ignored
+ACK(1) sent out on link 1.
+				DATA received. Link: 3, sequence: 0.
+Node: 2. Src: 3. Dst: 2. Arrived at destination node.
+ACK(0) sent out on link 3.
+				ACK received. Link: 3, sequence: 1.
+DATA(0) sent out on link 3.
+				DATA received. Link: 3, sequence: 1.
+Node: 2. Src: 3. Dst: 1. Forwarding packet for Node: 1
+ACK(1) sent out on link 3.
+				DATA received. Link: 4, sequence: 1.
+Node: 2. Src: 4. Dst: 1. Forwarding packet for Node: 1
+ACK(1) sent out on link 4.
+Timeout, DATA(0) out on link: 4
+DATA(0) sent out on link 4.
+Timeout, DATA(1) out on link: 2
+DATA(1) sent out on link 2.
+				ACK received. Link: 4, sequence: 0.
+				DATA received. Link: 2, sequence: 1.
+Node: 2. Src: 1. Dst: 3. Forwarding packet for Node: 3
+ACK(1) sent out on link 2.
+				ACK received. Link: 1, sequence: 1.
+DATA(0) sent out on link 1.
+DATA(1) sent out on link 4.
+				DATA received. Link: 4, sequence: 0.
+Node: 2. Src: 4. Dst: 1. Forwarding packet for Node: 1
+ACK(0) sent out on link 4.
+				ACK received. Link: 3, sequence: 0.
+DATA(1) sent out on link 3.
+				Incorrect ACK. Link: 4, sequence: 0, expected 1
