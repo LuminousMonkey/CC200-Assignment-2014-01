@@ -4,6 +4,9 @@
 \setvariables[document]
   [title={Computer Communications 200\crlf Assignment},author={Aldred, Michael\crlf 09831542}]
 
+  \setupbibtex[database={cc200},sort=author]
+  \setuppublications[alternative=ieee,numbering=yes]
+
 \starttext
 
 \startstandardmakeup
@@ -40,7 +43,7 @@ This implementation of the stop and wait protocol does not disable new message g
 \section{Physical layer}
 Only a thin wrapper where the function for the \quotation{physical_ready} event is held, it just passes the frame up to the data link layer.
 
-\chapter{Implementations}
+\chapter{Implementation}
 
 \section{Getting messages out of sequence}
 One of the biggest problems that occurred was that nodes would receive messages out of order. This was caused by a node generating a message while it had forwarded a packet. Because the node was waiting for an ACK frame, sending out another DATA frame would cause all sorts of problems with the sequence numbers being shifted out of order.
@@ -48,6 +51,26 @@ One of the biggest problems that occurred was that nodes would receive messages 
 The solution, was to have a FIFO queue per link. When the datalink layer gets a packet from the network layer, it's placed on a queue for that link. If the node isn't waiting for an ACK, then the first packet on the queue is sent down the link as a DATA frame. With this, and static routing, the application messages will not arrive out of order.
 
 These link queues are boundless, and the poor efficiency of stop and wait, means that these queues will grow indefinitely, however this doesn't prove to be a problem on the lab machines which have plenty of RAM.
+
+\section{Stop and wait}
+Besides that, the stop and wait implimentation is typical. The links on each node have their own sequence number counters, ack_expected, next_frame_to_send, and frame_expected. However, no matter the sequence number of DATA frames, an ACK is always sent. Data packets received out of sequence are ignored, but an ACK must always be sent because that DATA frame could have been received because the previous ACK was lost or corrupted.
+
+This is due to the sending node maintaining its own timer, if the sending node doesn't receive a valid ACK, this timer will expire and the last DATA frame will be sent again. These timers are kept on a per link basis, as a single node may be waiting on multiple ACKS (one for each link).
+
+Frames are always checked with CRC32 before being processed, it is simply unknown what data could have been corrupted, so the safest option is just to ignore the frame and rely on the sending node to resend the frame again when its timer expires.
+
+\section{Static routing}
+Static routing was used, dynamic routing could have been used, but given the small size and simple nature of the network topology it was decided that it wouldn't be needed. Adding dynamic routing would have added more complexity to the implementation for little to no gain.
+
+What was considered briefly was sending a packet via a different route if a link was busy, this was quickly rejected as it would have involved a transport layer needing to be implemented. It would have also made the data link and network layers more complicated as the network layer would have to make routing decisions based on the state of the link. Again, too much pain for little gain.
+
+\section{Improvements}
+If this implementation was to be improved, then perhaps the simplest improvement would be implementing piggybacking, since the queues always seem to be full, this could be implemented without needing to worry about making the decision to delay an ACK for the DATA to piggyback on.
+
+However, the biggest improvement would be to move away from stop and wait completely and move to a sliding window protocol. \cite[tanenbaum]
+
+\chapter{Bibliography}
+\placepublications[criterium=text]
 
 \stopbodymatter
 \stoptext
